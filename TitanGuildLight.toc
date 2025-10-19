@@ -1,0 +1,11 @@
+## Interface: 110205, 11507, 50501
+## Title: Titan Panel [|cffeda55fGuildLight|r] |cff00aa001.0.0|r
+## Notes: A simple guild list for the Titan Panel AddOn.
+## Author: Dornonville
+## Version: 1.0.0
+## IconTexture: Interface\PetitionFrame\GuildCharter-Icon.blp
+## Dependencies: Titan
+
+## X-CompatibleLocales: enUS
+
+main.xml

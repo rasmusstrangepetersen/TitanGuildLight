@@ -1,0 +1,26 @@
+<Ui>
+    <Frame parent="UIParent">
+        <Frames>
+            <Button name="TitanPanelGuildLightButton" inherits="TitanPanelComboTemplate" frameStrata="FULLSCREEN"
+                    toplevel="true">
+                <Scripts>
+                    <OnLoad>
+                        TitanPanelGuildLightButton_OnLoad(self);
+                        TitanPanelButton_OnLoad(self);
+                    </OnLoad>
+                    <OnEvent>
+						TitanPanelGuildLightButton_OnEvent(self);
+                    </OnEvent>
+                    <OnEnter>
+						TitanPanelGuildLightButton_OnEnter(self);
+                        TitanPanelButton_OnEnter(self);
+                    </OnEnter>
+                    <OnClick>
+                        TitanPanelGuildLightButton_OnClick(self, button);
+                        TitanPanelButton_OnClick(self, button);
+                    </OnClick>
+                </Scripts>
+            </Button>
+        </Frames>
+    </Frame>
+</Ui>

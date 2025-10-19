@@ -1,0 +1,9 @@
+<Ui>
+	<Script file="locales\localizationEn.lua"/>
+
+	<Script file="version.lua"/>
+	<Script file="variables.lua"/>
+	<Script file="TitanGuildLight.lua"/>
+
+	<Include file="frames\TitanGuildLight.xml"/>
+</Ui>
