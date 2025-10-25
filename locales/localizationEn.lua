@@ -5,6 +5,15 @@ GUILDLIGHT_TOOLTIP = "Guild Info"
 GUILDLIGHT_NOT_IN_GUILD = "Not a guild member";
 GUILDLIGHT_TOOLTIP_HINT_TEXT = "Hint: Left-click to toggle guild window";
 
+-- *** Version information
+VERSION_TEXT = "TitanPanel GuildLight version: "
+VERSION_RETAIL = " - The War Within"
+VERSION_VANILLA = " - Classic Vanilla/SoD"
+VERSION_CLASSIC = " - Classic Mist of Pandaria"
+VERSION_UNSUPPORTED = " - Unsupported/untested WOW client"
+
+GUILDLIGHT_ADDON_NOT_LOADED = "Addon not loaded, mouseover for update"
+
 -- Class names used in tooltip filtering
 WARRIOR = "Warrior";
 MAGE = "Mage";

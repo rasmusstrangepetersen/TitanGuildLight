@@ -15,6 +15,9 @@
 						TitanPanelGuildLightButton_OnEnter(self);
                         TitanPanelButton_OnEnter(self);
                     </OnEnter>
+                    <OnUpdate>
+                        TitanPanelGuildLightButton_OnUpdate(self, elapsed);
+                    </OnUpdate>
                     <OnClick>
                         TitanPanelGuildLightButton_OnClick(self, button);
                         TitanPanelButton_OnClick(self, button);

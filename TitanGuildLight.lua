@@ -1,3 +1,6 @@
+-- future fixes
+-- classic era, Interface 11508 - GetTooltipText returns nil
+
 --- Titan command and registry variables
 REVISION = "1.0.0";
 GUILDLIGHT_ID = "GuildLight"; -- don't change this, without changing all TitanPanel function names also
@@ -20,6 +23,11 @@ ADDON_VARIABLE_SHOW_RANK = "ShowTooltipRank";
 
 --- titan guild global variables
 local showDebug = 0; -- 1 = show debugs in general chat, 0 turns off debug
+
+-- *** Local variables
+local timeCounter = 0;
+local updateDelay = 5; -- auto update every 5 seconds
+local updateFrame = CreateFrame("frame");
 
 -- **************************************************************************
 -- DESC : Debug function to print message to chat frame
@@ -83,6 +91,9 @@ function TitanPanelGuildLightButton_OnLoad(self)
         }
     };
     self:RegisterEvent("GUILD_ROSTER_UPDATE");
+    updateFrame:SetScript("OnUpdate", TitanPanelGuildLightButton_OnUpdate)
+
+    DEFAULT_CHAT_FRAME:AddMessage("|c".. colorOrange .."".. VERSION_TEXT .. REVISION .. VERSION_WOWVERSION);
 end
 
 -- **************************************************************************
@@ -91,6 +102,7 @@ end
 function TitanPanelGuildLightButton_OnEnter(self)
     debugMessage("Entering: TitanPanelGuildLightButton_OnEnter", 0);
     -- mouse over update
+    C_GuildInfo.GuildRoster();
     TitanPanelButton_UpdateButton(GUILDLIGHT_ID);
     TitanPanelButton_UpdateTooltip(self);
 end
@@ -113,6 +125,7 @@ function TitanPanelGuildLightButton_OnEvent(self, event)
     debugMessage("Entering: TitanPanelGuildLightButton_OnEvent", 0);
 
     if (event == "GUILD_ROSTER_UPDATE") then
+        C_GuildInfo.GuildRoster();
         TitanPanelButton_UpdateButton(GUILDLIGHT_ID);
         TitanPanelButton_UpdateTooltip(self);
     end
@@ -144,7 +157,11 @@ function TitanPanelGuildLightButton_GetButtonText(id)
         C_GuildInfo.GuildRoster();
         -- show label text
         if (TitanGetVar(GUILDLIGHT_ID, CONTROL_VARIABLE_SHOW_LABEL_TEXT)) then
-            label = GetGuildInfo(PLAYER) .. ": ";
+            local guildName, guildRankName, guildRankIndex, realm = GetGuildInfo(PLAYER)
+            if (guildName == nil) then
+                guildName = GUILDLIGHT_ADDON_NOT_LOADED
+            end
+            label = guildName .. ": ";
         else
             label = "";
         end
@@ -169,19 +186,12 @@ function GetMenuText(id)
     C_GuildInfo.GuildRoster();
 
     if (TitanGetVar(id, CONTROL_VARIABLE_SHOW_REGULAR_TEXT)) then
-        local numTotalMembers, numOnlineMaxLevelMembers, numOnlineMembers = GetNumGuildMembers();
-        local numOnlineTotalMembers = 0;
-        if (numOnlineMaxLevelMembers) then
-            numOnlineTotalMembers = numOnlineMaxLevelMembers;
-        end
-        if (numOnlineMembers) then
-            numOnlineTotalMembers = numOnlineTotalMembers + numOnlineMembers;
-        end
+        local numTotalMembers, numOnlineMembers = GetNumGuildMembers();
 
         if (TitanGetVar(id, CONTROL_VARIABLE_SHOW_COLORED_TEXT)) then
-            menuText = "|c" .. colorGreen .. numOnlineTotalMembers .. "|c" .. colorWhite .. "/" .. numTotalMembers
+            menuText = "|c" .. colorGreen .. numOnlineMembers .. "|c" .. colorWhite .. "/" .. numTotalMembers
         else
-            menuText = TitanUtils_GetNormalText(numOnlineTotalMembers .. "/" .. numTotalMembers);
+            menuText = TitanUtils_GetNormalText(numOnlineMembers .. "/" .. numTotalMembers);
         end
     end
 
@@ -198,7 +208,8 @@ function TitanPanelGuildLightButton_GetTooltipText()
 
     if (IsInGuild()) then
         -- add guildname as headline
-        out = TitanUtils_GetNormalText(GetGuildInfo("player"));
+        local guildName, guildRankName, guildRankIndex, realm = GetGuildInfo(PLAYER)
+        out = TitanUtils_GetNormalText(guildName);
         -- add hint on same line
         out = out .. "\t" .. TitanUtils_GetGreenText(GUILDLIGHT_TOOLTIP_HINT_TEXT);
         out = out .. GetTooltipText();
@@ -211,7 +222,9 @@ end
 -- DESC : Create and return the table with members
 -- **************************************************************************
 function GetTooltipText()
-    local numTotalMembers, numOnlineMaxLevelMembers, numOnlineMembers = GetNumGuildMembers();--
+    debugMessage("Entering: GetTooltipText", 0);
+
+    local numTotalMembers, numOnlineMembers = GetNumGuildMembers();
     local showOfflineMembers = TitanGetVar(GUILDLIGHT_ID, ADDON_VARIABLE_SHOW_OFFLINE_MEMBERS);
     local tooltipTextOnline = "";
     local tooltipTextOffline = "";
@@ -289,7 +302,7 @@ end
 function isClassShown(className)
     for index in ipairs(GUILDLIGHT_CLASSES) do
         if (GUILDLIGHT_CLASSES[index].class == className) then
-            TitanGetVar(GUILDLIGHT_ID, GUILDLIGHT_CLASSES[index].variable);
+            return TitanGetVar(GUILDLIGHT_ID, GUILDLIGHT_CLASSES[index].variable);
         end
     end
 end
@@ -399,3 +412,19 @@ function ToggleMenuItem(menuItemVariable)
     TitanToggleVar(GUILDLIGHT_ID, menuItemVariable);
     TitanPanelButton_UpdateButton(GUILDLIGHT_ID);
 end;
+
+-- **************************************************************************
+-- DESC : Update button after <UpdateDelay> seconds
+-- **************************************************************************
+function TitanPanelGuildLightButton_OnUpdate(self, elapsed)
+    if (elapsed == nil ) then
+        elapsed = 0.01
+    end
+    timeCounter = timeCounter + elapsed
+    if (timeCounter >= updateDelay) then
+        TitanPanelButton_UpdateButton(GUILDLIGHT_ID);
+        TitanPanelButton_UpdateTooltip(self);
+
+        timeCounter = 0
+    end
+end

@@ -19,6 +19,7 @@ colorWhite      = "ffffffff"; -- white
 colorOrange     = "ffff8000"; -- orange used for level
 colorYellow     = "ffffff00"; -- yellow used for status
 colorGrey       = "ff9d9d9d"; -- grey used for note
+colorGreen      = "ff1eff00"; -- used for tip to open guild window
 
 --- standard class colour
 GUILDLIGHT_CLASSES = {
